@@ -11,6 +11,7 @@ set(OPENNI2_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/OpenNI2/Bin/x64-Rel
 set(Sophus_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third-party/Sophus" CACHE PATH "Sophus Include directory")
 set(efusion_SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Core/Shaders" CACHE PATH "Where the shaders live")
 
+
 find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -20,6 +21,11 @@ find_package(CUDA REQUIRED)
 find_package(OpenNI2 REQUIRED)
 find_package(SuiteSparse REQUIRED)
 
+find_package(catkin REQUIRED COMPONENTS
+  roscpp roslib cmake_modules cv_bridge sensor_msgs image_transport)
+catkin_package(
+  CATKIN_DEPENDS roscpp roslib cv_bridge image_transport)
+
 include_directories(${JPEG_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIR})
 include_directories(${EIGEN_INCLUDE_DIRS})
@@ -28,6 +34,7 @@ include_directories(${CUDA_INCLUDE_DIRS})
 include_directories(${OPENNI2_INCLUDE_DIR})
 include_directories(${SUITESPARSE_INCLUDE_DIRS})
 include_directories(${Sophus_INCLUDE_DIR})
+include_directories(${catkin_INCLUDE_DIRS})
 
 if(WITH_REALSENSE)
   include_directories(${REALSENSE_INCLUDE_DIR})
@@ -63,4 +70,5 @@ target_link_libraries(ElasticFusion
                       ${SUITESPARSE_LIBRARIES}
                       ${BLAS_LIBRARIES}
                       ${LAPACK_LIBRARIES}
+                      ${catkin_LIBRARIES}
 )

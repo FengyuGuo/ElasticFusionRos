@@ -20,9 +20,15 @@
 #include "MainController.h"
 
 int main(int argc, char* argv[]) {
+
+      
+  ros::init(argc, argv, "ElasticFusion");
+  ros::start();
   MainController mainController(argc, argv);
 
   mainController.launch();
+
+  ros::shutdown();
 
   return 0;
 }

@@ -24,6 +24,9 @@
 #include "Tools/GroundTruthOdometry.h"
 #include "Tools/LiveLogReader.h"
 #include "Tools/RawLogReader.h"
+#include "Tools/ROSReader.h"
+
+#include "ros/ros.h"
 
 #ifndef MAINCONTROLLER_H_
 #define MAINCONTROLLER_H_
@@ -61,6 +64,8 @@ class MainController {
   bool resetButton;
 
   Resize* resizeStream;
+
+  ros::NodeHandle nh;
 };
 
 #endif /* MAINCONTROLLER_H_ */

@@ -18,6 +18,9 @@
  */
 
 #include "MainController.h"
+#include "ros/ros.h"
+
+#define ROS_LIVE
 
 MainController::MainController(int argc, char* argv[])
     : good(true),
@@ -28,6 +31,7 @@ MainController::MainController(int argc, char* argv[])
       framesToSkip(0),
       resetButton(false),
       resizeStream(0) {
+
   std::string empty;
   iclnuim = Parse::get().arg(argc, argv, "-icl", empty) > -1;
 
@@ -47,10 +51,16 @@ MainController::MainController(int argc, char* argv[])
   if (logFile.length()) {
     logReader = new RawLogReader(logFile, Parse::get().arg(argc, argv, "-f", empty) > -1);
   } else {
+#ifdef ROS_LIVE
+    logReader = new ROSReader(nh, "/astra/color", "/astra/depth");
+#endif
+
+#ifndef ROS_LIVE
     bool flipColors = Parse::get().arg(argc, argv, "-f", empty) > -1;
     logReader = new LiveLogReader(logFile, flipColors, LiveLogReader::CameraType::OpenNI2);
 
     good = ((LiveLogReader*)logReader)->cam->ok();
+#endif
 
 #ifdef WITH_REALSENSE
     if (!good) {
@@ -162,8 +172,11 @@ void MainController::loadCalibration(const std::string& filename) {
 }
 
 void MainController::launch() {
+
   while (good) {
+    
     if (eFusion) {
+      ROS_INFO("run");
       run();
     }
 
@@ -199,8 +212,10 @@ void MainController::launch() {
 }
 
 void MainController::run() {
-  while (!pangolin::ShouldQuit() && !((!logReader->hasMore()) && quiet) &&
+  
+  while (!pangolin::ShouldQuit() && !((!logReader->hasMore()) && quiet) && ros::ok() &&
          !(eFusion->getTick() == end && quiet)) {
+    ros::spinOnce();
     if (!gui->pause->Get() || pangolin::Pushed(*gui->step)) {
       if ((logReader->hasMore() || rewind) && eFusion->getTick() < end) {
         TICK("LogRead");
@@ -238,7 +253,7 @@ void MainController::run() {
           T_wc = new Sophus::SE3d(
               groundTruthOdometry->getTransformation(logReader->timestamp).cast<double>());
         }
-
+        // ROS_INFO("before process frame");
         eFusion->processFrame(
             logReader->rgb, logReader->depth, logReader->timestamp, weightMultiplier, T_wc);
 

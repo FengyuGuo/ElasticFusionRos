@@ -62,6 +62,7 @@ void RawLogReader::getNext() {
 
 void RawLogReader::getCore() {
   auto tmp = fread(&timestamp, sizeof(int64_t), 1, fp);
+  // std::cout << timestamp << std::endl;
   assert(tmp);
 
   tmp = fread(&depthSize, sizeof(int32_t), 1, fp);
