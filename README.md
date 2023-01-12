@@ -1,3 +1,10 @@
+add ros support into Elastic Fusion
+
+usage:
+
+-color <color_topic> specify the ros topic of color image from rgbd camera. only bgr8 and rgb8 encoding is supported
+-depth <depth_topic> specify the ros topic of depth image from rgbd camera. only mono16 encoding is supported
+
 # ElasticFusion #
 
 Real-time dense visual SLAM system capable of capturing comprehensive dense globally consistent surfel-based maps of room scale environments explored using an RGB-D camera.

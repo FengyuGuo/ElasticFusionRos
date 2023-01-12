@@ -36,9 +36,13 @@ void ROSReader::getNext()
     rgb = (uint8_t*)imageReadBuffer;
     depth = (uint16_t*)depthReadBuffer;
 
-    for (int i = 0; i < Resolution::getInstance().numPixels() * 3; i += 3) {
-      std::swap(rgb[i + 0], rgb[i + 2]);
+    if(flipColors)
+    {
+        for (int i = 0; i < Resolution::getInstance().numPixels() * 3; i += 3) {
+            std::swap(rgb[i + 0], rgb[i + 2]);
+        }
     }
+
 }
 
 int ROSReader::getNumFrames() 
@@ -79,5 +83,10 @@ void ROSReader::RGBD_callback(const sensor_msgs::ImageConstPtr& color, const sen
     while(depth_buffer.size() > 10)
     {
         depth_buffer.pop_front();
+    }
+
+    if(color->encoding == "bgr8")
+    {
+        flipColors = true;
     }
 }
