@@ -48,11 +48,24 @@ MainController::MainController(int argc, char* argv[])
 
   Parse::get().arg(argc, argv, "-l", logFile);
 
+  std::string color_topic, depth_topic;
+  Parse::get().arg(argc, argv, "-color", color_topic);
+  Parse::get().arg(argc, argv, "-depth", depth_topic);
+
+  if(color_topic.empty())
+  {
+    color_topic="/cam/color";
+  }
+  if(depth_topic.empty())
+  {
+    depth_topic="/cam/depth";
+  }
+
   if (logFile.length()) {
     logReader = new RawLogReader(logFile, Parse::get().arg(argc, argv, "-f", empty) > -1);
   } else {
 #ifdef ROS_LIVE
-    logReader = new ROSReader(nh, "/astra/color", "/astra/depth");
+    logReader = new ROSReader(nh, color_topic, depth_topic);
 #endif
 
 #ifndef ROS_LIVE

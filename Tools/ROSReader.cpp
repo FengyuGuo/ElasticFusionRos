@@ -2,7 +2,7 @@
 
 
 ROSReader::ROSReader(ros::NodeHandle n, std::string color_topic, std::string depth_topic):
-LogReader("/temp/elastic_fusion", false), nh(n),
+LogReader("/tmp/elastic_fusion", false), nh(n),
 color_sub(nh, color_topic, 10),
 depth_sub(nh, depth_topic, 10),
 sync(sync_pol(10), color_sub, depth_sub)
